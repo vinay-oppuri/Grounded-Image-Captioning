@@ -77,18 +77,6 @@ from src.utils.blip_captioner import (
 from src.utils.clip_scorer import clip_rerank_captions, get_clip_scorer
 from src.utils.detection_verifier import verify_detections
 from src.utils.visualize import draw_relation_boxes
-from src.utils.eval_debug import (
-    save_visual_debug,
-    save_debug_composite,
-    run_baseline_comparison_debug,
-    classify_failures,
-    build_failure_report,
-    generate_attention_visualization,
-    analyze_relation_errors,
-    build_final_evaluation_table,
-    generate_final_report,
-    compute_refined_prior_adjustment,
-)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -1064,55 +1052,10 @@ def main():
             )
         all_results.append(result)
 
-        # ── PHASE 1: Visual debug outputs ───────────────────────────────
-        if args.debug_full or args.evaluate:
-            image = Image.open(img_path).convert("RGB")
-            save_debug_composite(
-                image,
-                result.get("raw_detections", []),
-                result.get("detections", []),
-                result.get("relations", []),
-                result.get("caption", ""),
-                img_name,
-                output_dir=debug_dir if args.evaluate else args.debug_dir,
-            )
-
-        # Legacy debug visualization
-        if args.debug:
-            debug_dir = output_root / "debug_vis"
-            os.makedirs(str(debug_dir), exist_ok=True)
-            debug_path = str(debug_dir / f"{img_name}_debug.png")
+        # Debug visualization
+        if args.debug or args.debug_full or args.visualize:
+            debug_path = str(output_root / f"{img_name}_annotated.jpg")
             save_debug_visualization(result, debug_path)
-
-        # ── PHASE 2: Baseline comparison ────────────────────────────────
-        if args.compare_baseline or args.compare:
-            if args.compare_baseline:
-                comp_dir = os.path.join(args.eval_dir, "baseline_comparison")
-            else:
-                comp_dir = str(output_root / "comparison")
-            image = Image.open(img_path).convert("RGB")
-            comparison = run_baseline_comparison_debug(
-                image,
-                img_name,
-                result.get("vanilla_caption", ""),
-                result.get("caption", ""),
-                result.get("relations", []),
-                result.get("detections", []),
-                output_dir=comp_dir,
-            )
-            all_comparisons.append(comparison)
-
-        # ── PHASE 3+6: Failure analysis + diagnostics ──────────────────
-        if args.evaluate:
-            failure = classify_failures(
-                img_name,
-                result.get("detections", []),
-                result.get("relations", []),
-                result.get("raw_predictions", []),
-                result.get("caption", ""),
-                result.get("vanilla_caption", None),
-            )
-            all_failures.append(failure)
 
         # ── PHASE 5: Attention analysis (per-pair) ──────────────────────
         if args.attention:
@@ -1239,58 +1182,6 @@ def main():
                     print(f"    {name:15s}: {norm:8.4f}  ({pct:5.1f}%)")
         except Exception as e:
             print(f"\n  Feature analysis: {e}")
-
-    # ── PHASE 3+8+9: Build evaluation outputs ──────────────────────────
-    if args.evaluate:
-        # Phase 8: Evaluation table
-        table_data = []
-        for r in all_results:
-            img_name = Path(r["image_path"]).stem
-            # Find matching failure
-            failure = next((f for f in all_failures if f["image_name"] == img_name), {})
-            table_data.append({
-                "image_name": img_name,
-                "detections": r.get("detections", []),
-                "relations": r.get("relations", []),
-                "caption": r.get("caption", ""),
-                "vanilla_caption": r.get("vanilla_caption", ""),
-                "failures": failure,
-                "raw_caption": r.get("raw_caption", ""),
-            })
-
-        eval_csv = build_final_evaluation_table(
-            table_data,
-            output_dir=args.eval_dir,
-        )
-
-        # Phase 3: Failure report
-        fail_path = build_failure_report(
-            all_failures,
-            output_dir=args.eval_dir,
-        )
-
-        # Phase 9: Final report
-        attention_path = None
-        attn_dir = os.path.join(args.eval_dir, "attention")
-        if os.path.isdir(attn_dir):
-            attn_files = sorted(Path(attn_dir).glob("*_attention.json"))
-            if attn_files:
-                attention_path = str(attn_files[0])
-
-        report_path = generate_final_report(
-            table_data,
-            failure_report_path=fail_path,
-            eval_table_path=eval_csv,
-            attention_report_path=attention_path,
-            output_dir=args.eval_dir,
-        )
-
-        print(f"\n{'=' * 70}")
-        print(f"  FULL EVALUATION COMPLETE")
-        print(f"{'=' * 70}")
-        print(f"  Evaluation CSV:  {eval_csv}")
-        print(f"  Failure report:  {fail_path}")
-        print(f"  Final report:    {report_path}")
 
     # ── Summary ─────────────────────────────────────────────────────────
     total_rels = sum(len(r.get('relations', [])) for r in all_results)

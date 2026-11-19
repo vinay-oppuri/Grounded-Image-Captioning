@@ -45,7 +45,9 @@ from src.dataset.vg_dataset import (
     UNION_FEATURE_DIM,
 )
 from src.features.clip_extractor import CLIPExtractor, CLIP_DIM
-from src.features.pose_extractor import PoseExtractor, POSE_FEATURE_DIM
+
+POSE_FEATURE_DIM = 20
+PoseExtractor = None
 
 
 # ---------------------------------------------------------------------------

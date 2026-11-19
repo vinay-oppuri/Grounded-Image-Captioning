@@ -27,7 +27,9 @@ from PIL import Image
 
 from src.features.clip_extractor import CLIPExtractor, CLIP_DIM
 from src.features.clip_cache import ClipCache
-from src.features.pose_extractor import PoseExtractor, POSE_FEATURE_DIM
+
+POSE_FEATURE_DIM = 20
+PoseExtractor = None
 
 
 # ---------------------------------------------------------------------------

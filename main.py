@@ -3,25 +3,21 @@ main.py — Production CLI Entry Point for Grounded Image Captioning.
 
 Workflows supported:
   1. caption          Run grounded caption inference on input image(s) -> results/
-  2. train-detector   Train HybridDetector (CNN + ViT + GNN) on COCO dataset
-  3. train-relations  Train Visual-Semantic Relation MLP on Visual Genome dataset
-  4. evaluate         Run benchmark evaluation across models (BLEU, CHAIR, POPE)
+  2. train-relations  Train Visual-Semantic Relation MLP on Visual Genome dataset
+  3. evaluate         Run benchmark evaluation of relation models on frozen test splits
 
 Usage:
   # Caption all images in ./input/ and write output to ./results/
   python main.py caption
 
   # Caption a single image
-  python main.py caption --image input/sample.jpg --output results/
-
-  # Train detector on COCO
-  python main.py train-detector --coco-root ./data/coco --epochs 30
+  python main.py caption --input input/sample.jpg --output results/ --visualize
 
   # Train relation model on Visual Genome
   python main.py train-relations --vg-root ./data/visual_genome --use-visual
 
-  # Evaluate captioning systems
-  python main.py evaluate --mode coco --coco-root ./data/coco
+  # Evaluate relation model against benchmark
+  python main.py evaluate --checkpoint-dir checkpoints/e2_geo
 """
 
 from __future__ import annotations
@@ -53,6 +49,7 @@ from src.utils.seed import set_seed
 def run_caption_workflow(args: argparse.Namespace) -> int:
     """Run object detection, relation prediction, and grounded captioning."""
     from src.inference.caption_pipeline import run_grounded_pipeline, save_debug_visualization
+    from src.inference import predict_relations as rel_predict
 
     input_path = Path(args.input)
     output_dir = Path(args.output)
@@ -160,69 +157,6 @@ def run_caption_workflow(args: argparse.Namespace) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Workflow 2: Train Hybrid Detector
-# ---------------------------------------------------------------------------
-
-def run_train_detector_workflow(args: argparse.Namespace) -> int:
-    """Train the CNN + ViT + GNN HybridDetector on COCO."""
-    from torch.utils.data import DataLoader, Subset
-    from src.models.detector import HybridDetector
-    from src.dataset.coco_detection import COCODetectionDataset, collate_fn
-    from src.training.train_detector import train_detector
-
-    set_seed(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-
-    img_dir = os.path.join(args.coco_root, "train2017")
-    ann_file = os.path.join(args.coco_root, "annotations", "instances_train2017.json")
-
-    for path, label in [(img_dir, "COCO images"), (ann_file, "COCO annotations")]:
-        if not os.path.exists(path):
-            print(f"[ERROR] {label} not found at: {path}")
-            print("  Please download COCO 2017 to the specified --coco-root directory.")
-            return 1
-
-    print("Loading COCO dataset...")
-    full_dataset = COCODetectionDataset(image_dir=img_dir, annotation_file=ann_file)
-    print(f"  Total images available: {len(full_dataset):,}")
-
-    train_size = min(args.train_size, len(full_dataset))
-    val_size = min(args.val_size, len(full_dataset) - train_size)
-    rng = random.Random(args.seed)
-    indices = list(range(len(full_dataset)))
-    rng.shuffle(indices)
-
-    train_ds = Subset(full_dataset, indices[:train_size])
-    val_ds = Subset(full_dataset, indices[train_size:train_size + val_size])
-
-    pin = device.type == "cuda"
-    train_loader = DataLoader(
-        train_ds, batch_size=args.batch_size, shuffle=True,
-        num_workers=args.num_workers, pin_memory=pin, collate_fn=collate_fn,
-    )
-    val_loader = DataLoader(
-        val_ds, batch_size=args.batch_size, shuffle=False,
-        num_workers=args.num_workers, pin_memory=pin, collate_fn=collate_fn,
-    )
-
-    model = HybridDetector(num_classes=5)
-    os.makedirs(args.checkpoint_dir, exist_ok=True)
-
-    print("\nStarting detector training...")
-    train_detector(
-        model=model,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        epochs=args.epochs,
-        lr=args.lr,
-        device=device,
-        checkpoint_dir=args.checkpoint_dir,
-    )
-    return 0
-
-
-# ---------------------------------------------------------------------------
 # CLI Parser Setup
 # ---------------------------------------------------------------------------
 
@@ -248,21 +182,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_cap.add_argument("--visualize", action="store_true", default=True,
                        help="Save annotated detection and relationship image to output directory")
 
-    # 2. train-detector
-    p_td = subparsers.add_parser("train-detector", help="Train HybridDetector on COCO")
-    p_td.add_argument("--coco-root", type=str, default="./data/coco",
-                      help="Root directory of COCO dataset (default: ./data/coco)")
-    p_td.add_argument("--checkpoint-dir", type=str, default="./checkpoints",
-                      help="Directory to save model checkpoints (default: ./checkpoints)")
-    p_td.add_argument("--epochs", type=int, default=30, help="Number of training epochs")
-    p_td.add_argument("--batch-size", type=int, default=4, help="Batch size (default: 4)")
-    p_td.add_argument("--lr", type=float, default=1e-4, help="Learning rate (default: 1e-4)")
-    p_td.add_argument("--train-size", type=int, default=16000, help="Number of training samples")
-    p_td.add_argument("--val-size", type=int, default=2000, help="Number of validation samples")
-    p_td.add_argument("--num-workers", type=int, default=2, help="DataLoader workers")
-    p_td.add_argument("--seed", type=int, default=42, help="Random seed")
-
-    # 3. train-relations
+    # 2. train-relations
     p_tr = subparsers.add_parser("train-relations", help="Train Visual-Semantic Relation MLP on Visual Genome")
     p_tr.add_argument("--vg-root", type=str, default="./data/visual_genome",
                       help="Root directory of Visual Genome (default: ./data/visual_genome)")
@@ -275,18 +195,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_tr.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
     p_tr.add_argument("--seed", type=int, default=42, help="Random seed")
 
-    # 4. evaluate
-    p_ev = subparsers.add_parser("evaluate", help="Run benchmark evaluation (BLEU, CHAIR, POPE)")
-    p_ev.add_argument("--mode", choices=["coco", "custom", "hallucination"], default="custom",
-                      help="Evaluation data source mode")
-    p_ev.add_argument("--image-dir", type=str, default="input",
-                      help="Directory containing test images")
-    p_ev.add_argument("--output-dir", type=str, default="results",
-                      help="Output directory for evaluation results")
-    p_ev.add_argument("--coco-root", type=str, default="./data/coco",
-                      help="COCO dataset root directory")
-    p_ev.add_argument("--num-samples", type=int, default=None,
-                      help="Limit number of images to evaluate")
+    # 3. evaluate
+    p_ev = subparsers.add_parser("evaluate", help="Evaluate relation model checkpoints against frozen test split")
+    p_ev.add_argument("--checkpoint-dir", type=str, default="checkpoints/e2_geo",
+                      help="Directory containing relation checkpoint and vocabularies")
+    p_ev.add_argument("--split-manifest", type=str, default="splits/e0_image_split.json",
+                      help="Path to frozen split manifest")
+    p_ev.add_argument("--results-dir", type=str, default="results",
+                      help="Directory to write evaluation JSON")
+    p_ev.add_argument("--output-name", type=str, default="benchmark_eval",
+                      help="Name of evaluation output file")
+    p_ev.add_argument("--force", action="store_true", default=True,
+                      help="Overwrite existing evaluation file")
 
     return parser
 
@@ -304,14 +224,12 @@ def main() -> None:
 
     if args.command == "caption":
         sys.exit(run_caption_workflow(args))
-    elif args.command == "train-detector":
-        sys.exit(run_train_detector_workflow(args))
     elif args.command == "train-relations":
         from src.training.train_relations import main as train_rel_main
         sys.exit(train_rel_main())
     elif args.command == "evaluate":
-        from src.evaluation.evaluate import main as eval_main
-        sys.exit(eval_main())
+        from src.evaluation.eval_relations import main as eval_rel_main
+        sys.exit(eval_rel_main())
     else:
         parser.print_help()
 
