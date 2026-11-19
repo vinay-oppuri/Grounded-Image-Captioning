@@ -1,0 +1,14 @@
+# Data configuration for Grounded Image Captioning
+data:
+  input_dir: "./input"
+  results_dir: "./results"
+  checkpoint_dir: "./checkpoints"
+  coco_root: "./data/coco"
+  vg_root: "./data/visual_genome"
+  splits_dir: "./splits"
+
+dataset_splits:
+  coco:
+    train_size: 16000
+    val_size: 2000
+    test_size: 2000

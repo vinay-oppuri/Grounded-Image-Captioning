@@ -1,0 +1,21 @@
+# Model architecture configuration
+detector:
+  architecture: "HybridDetector"
+  num_classes: 5
+  yolo_model: "yolo11m.pt"
+  confidence_threshold: 0.5
+  iou_threshold: 0.5
+
+relation_model:
+  architecture: "RelationMLP"
+  embed_dim: 64
+  geo_dim: 19
+  clip_dim: 768
+  union_dim: 768
+  hidden_dims: [256, 128]
+  dropout: 0.2
+
+captioner:
+  model_id: "Salesforce/blip-image-captioning-base"
+  prompt_prefix: "a photo of"
+  min_confidence: 0.5

@@ -1,0 +1,33 @@
+[
+  {
+    "image": "input\\sample.jpg",
+    "caption": "The scene contains a bus and a person, but the interaction is unclear.",
+    "baseline_caption": "a photo of a group of people getting on a bus",
+    "relations": [
+      "person looking at person (0.10)"
+    ],
+    "detections": [
+      {
+        "label": "bus",
+        "score": 0.927
+      },
+      {
+        "label": "person",
+        "score": 0.916
+      },
+      {
+        "label": "person",
+        "score": 0.907
+      },
+      {
+        "label": "person",
+        "score": 0.893
+      },
+      {
+        "label": "person",
+        "score": 0.787
+      }
+    ],
+    "relation_used": true
+  }
+]
