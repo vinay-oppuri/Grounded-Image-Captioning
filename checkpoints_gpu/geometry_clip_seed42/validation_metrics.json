@@ -1,0 +1,92 @@
+{
+  "above": {
+    "total": 66,
+    "correct": 23,
+    "accuracy": 0.3485
+  },
+  "attached to": {
+    "total": 12,
+    "correct": 0,
+    "accuracy": 0.0
+  },
+  "behind": {
+    "total": 459,
+    "correct": 215,
+    "accuracy": 0.4684
+  },
+  "carrying": {
+    "total": 306,
+    "correct": 30,
+    "accuracy": 0.098
+  },
+  "covering": {
+    "total": 5,
+    "correct": 0,
+    "accuracy": 0.0
+  },
+  "holding": {
+    "total": 1510,
+    "correct": 1318,
+    "accuracy": 0.8728
+  },
+  "in": {
+    "total": 803,
+    "correct": 497,
+    "accuracy": 0.6189
+  },
+  "in front of": {
+    "total": 141,
+    "correct": 7,
+    "accuracy": 0.0496
+  },
+  "inside": {
+    "total": 62,
+    "correct": 0,
+    "accuracy": 0.0
+  },
+  "looking at": {
+    "total": 213,
+    "correct": 36,
+    "accuracy": 0.169
+  },
+  "near": {
+    "total": 979,
+    "correct": 635,
+    "accuracy": 0.6486
+  },
+  "on": {
+    "total": 3639,
+    "correct": 2791,
+    "accuracy": 0.767
+  },
+  "over": {
+    "total": 42,
+    "correct": 25,
+    "accuracy": 0.5952
+  },
+  "riding": {
+    "total": 821,
+    "correct": 335,
+    "accuracy": 0.408
+  },
+  "sitting on": {
+    "total": 638,
+    "correct": 298,
+    "accuracy": 0.4671
+  },
+  "standing on": {
+    "total": 135,
+    "correct": 0,
+    "accuracy": 0.0
+  },
+  "under": {
+    "total": 265,
+    "correct": 93,
+    "accuracy": 0.3509
+  },
+  "wearing": {
+    "total": 386,
+    "correct": 293,
+    "accuracy": 0.7591
+  }
+}

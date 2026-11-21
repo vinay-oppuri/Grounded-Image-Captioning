@@ -1,31 +1,40 @@
 [
   {
-    "image": "input\\sample.jpg",
-    "caption": "The scene contains a bus and a person, but the interaction is unclear.",
-    "baseline_caption": "a photo of a group of people getting on a bus",
+    "image": "input/image.jpg",
+    "caption": "a photo of a cup near a cup of coffee and a plate of bananas on a table",
+    "baseline_caption": "a photo of a plate of bananas and a bowl of fruit on a table",
+    "captions": {
+      "baseline": "a photo of a plate of bananas and a bowl of fruit on a table",
+      "object_reranked": "a photo of a cup near a cup of coffee and a plate of bananas on a table",
+      "relation_reranked": "a photo of a cup near a cup of coffee and a plate of bananas on a table"
+    },
     "relations": [
-      "person looking at person (0.10)"
+      "cup near cup (0.80)"
     ],
     "detections": [
       {
-        "label": "bus",
-        "score": 0.927
+        "label": "cup",
+        "score": 0.9273
       },
       {
-        "label": "person",
-        "score": 0.916
+        "label": "fork",
+        "score": 0.8693
       },
       {
-        "label": "person",
-        "score": 0.907
+        "label": "cup",
+        "score": 0.7835
       },
       {
-        "label": "person",
-        "score": 0.893
+        "label": "banana",
+        "score": 0.6751
       },
       {
-        "label": "person",
-        "score": 0.787
+        "label": "dining table",
+        "score": 0.6599
+      },
+      {
+        "label": "banana",
+        "score": 0.5151
       }
     ],
     "relation_used": true

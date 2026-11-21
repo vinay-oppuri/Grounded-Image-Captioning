@@ -1,17 +1,20 @@
 """
-main.py — Production CLI Entry Point for Grounded Image Captioning.
+main.py — Production CLI Entry Point for Grounded Image & Video Captioning.
 
 Workflows supported:
-  1. caption          Run grounded caption inference on input image(s) -> results/
+  1. caption          Run grounded caption inference on input image(s) or video(s) -> results/
   2. train-relations  Train Visual-Semantic Relation MLP on Visual Genome dataset
   3. evaluate         Run benchmark evaluation of relation models on frozen test splits
 
 Usage:
-  # Caption all images in ./input/ and write output to ./results/
+  # Caption all images and videos in ./input/ and write output to ./results/
   python main.py caption
 
   # Caption a single image
   python main.py caption --input input/sample.jpg --output results/ --visualize
+
+  # Caption a video with 1 frame/sec sampling and render annotated video
+  python main.py caption --input input/sample.mp4 --output results/ --sample-rate 1.0 --render-video
 
   # Train relation model on Visual Genome
   python main.py train-relations --vg-root ./data/visual_genome --use-visual
@@ -43,116 +46,161 @@ from src.utils.seed import set_seed
 
 
 # ---------------------------------------------------------------------------
-# Workflow 1: Grounded Captioning Inference
+# Workflow 1: Grounded Captioning Inference (Images & Videos)
 # ---------------------------------------------------------------------------
 
 def run_caption_workflow(args: argparse.Namespace) -> int:
-    """Run object detection, relation prediction, and grounded captioning."""
+    """Run object detection, relation prediction, and grounded captioning on images or videos."""
     from src.inference.caption_pipeline import run_grounded_pipeline, save_debug_visualization
-    from src.inference import predict_relations as rel_predict
+    from src.inference.video_pipeline import run_video_pipeline
 
     input_path = Path(args.input)
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+    video_extensions = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+
     images: List[Path] = []
+    videos: List[Path] = []
 
     if input_path.is_file():
-        if input_path.suffix.lower() in image_extensions:
+        suffix = input_path.suffix.lower()
+        if suffix in image_extensions:
             images.append(input_path)
+        elif suffix in video_extensions:
+            videos.append(input_path)
         else:
-            print(f"[ERROR] Unsupported image format: {input_path}")
+            print(f"[ERROR] Unsupported media format: {input_path}")
+            print(f"  Supported images: {sorted(image_extensions)}")
+            print(f"  Supported videos: {sorted(video_extensions)}")
             return 1
     elif input_path.is_dir():
-        images = sorted(
-            p for p in input_path.iterdir()
-            if p.is_file() and p.suffix.lower() in image_extensions
-        )
+        for p in sorted(input_path.iterdir()):
+            if p.is_file():
+                s = p.suffix.lower()
+                if s in image_extensions:
+                    images.append(p)
+                elif s in video_extensions:
+                    videos.append(p)
     else:
         print(f"[ERROR] Input path does not exist: {input_path}")
-        print("  Place input images in './input/' or specify with --input <path>")
+        print("  Place input images/videos in './input/' or specify with --input <path>")
         return 1
 
-    if not images:
-        print(f"[INFO] No images found in {input_path}")
-        print("  Place .jpg or .png images in './input/' to generate grounded captions.")
+    if not images and not videos:
+        print(f"[INFO] No images or videos found in {input_path}")
+        print("  Place .jpg, .png, or .mp4 files in './input/' to generate grounded captions.")
         return 0
 
-    print("=" * 70)
-    print("  GROUNDED IMAGE CAPTIONING WORKFLOW")
-    print(f"  Input:   {input_path} ({len(images)} image(s))")
-    print(f"  Output:  {output_dir}")
-    print(f"  Device:  {'cuda' if torch.cuda.is_available() else 'cpu'}")
-    print("=" * 70)
+    # Process videos
+    if videos:
+        for idx, vid_path in enumerate(videos, 1):
+            print(f"\n[{idx}/{len(videos)}] Processing Video: {vid_path.name}")
+            try:
+                run_video_pipeline(
+                    video_path=vid_path,
+                    output_dir=output_dir,
+                    sample_rate=args.sample_rate,
+                    render_video=args.render_video,
+                    top_k_relations=args.top_k,
+                    temperature=args.temperature,
+                    compare_baseline=args.compare,
+                )
+            except Exception as e:
+                print(f"  [ERROR] Failed processing video {vid_path.name}: {e}")
 
-    results = []
-    t_start = time.time()
+    # Process images
+    if images:
+        import demo_single_image as demo
+        from src.utils.visualize import draw_relation_boxes
 
-    for idx, img_path in enumerate(images, 1):
-        print(f"\n[{idx}/{len(images)}] Processing: {img_path.name}")
-        try:
-            res = run_grounded_pipeline(
-                str(img_path),
-                top_k_relations=args.top_k,
-                temperature=args.temperature,
-                compare_baseline=args.compare,
-            )
-            results.append(res)
+        print("=" * 70)
+        print("  GROUNDED IMAGE CAPTIONING WORKFLOW")
+        print(f"  Input:   {input_path} ({len(images)} image(s))")
+        print(f"  Output:  {output_dir}")
+        print(f"  Device:  {'cuda' if torch.cuda.is_available() else 'cpu'}")
+        print("=" * 70)
 
-            print("\n" + "=" * 65)
-            print(f"  IMAGE CAPTIONING RESULTS: {img_path.name}")
-            print("=" * 65)
-            print(f"  [Proposed Grounded Model]: {res.get('caption', 'N/A')}")
-            if res.get('vanilla_caption'):
-                print(f"  [Baseline Vanilla BLIP  ]: {res.get('vanilla_caption')}")
+        results = []
+        t_start = time.time()
 
-            rels = res.get('relations', [])
-            if rels:
-                print(f"  [Grounded Relations     ]:")
-                for r in rels:
-                    conf = r.get('adjusted_confidence', r.get('confidence', 0))
-                    print(f"    * {r['subject']} {r['predicate']} {r['object']} (conf: {conf:.2f})")
-            else:
-                reason = res.get('fallback_reason', 'none')
-                print(f"  [Grounded Relations     ]: None ({reason})")
-            print("=" * 65)
+        for idx, img_path in enumerate(images, 1):
+            try:
+                class DemoArgs:
+                    image = str(img_path)
+                    device = "cuda" if torch.cuda.is_available() else "cpu"
+                    selection = "results_caption/relation_checkpoint_selection.json"
+                    weights = "results_caption/rerank_weights.json"
+                    blip_dtype = "float32"
+                    num_candidates = 4
+                    conf = 0.5
+                    out_dir = str(output_dir)
 
-            # Save visual annotation if requested
-            if args.visualize:
-                vis_path = output_dir / f"{img_path.stem}_annotated.jpg"
-                save_debug_visualization(res, str(vis_path))
+                demo_res = demo.run(DemoArgs())
+                demo_out_path = demo.write_result(demo_res, str(output_dir))
+                results.append(demo_res)
 
-        except Exception as e:
-            print(f"  [ERROR] Failed processing {img_path.name}: {e}")
+                # Render exact format matching expected output
+                print(demo.render_report(demo_res))
+                print(f"\nwrote {demo_out_path}")
 
-    # Save summary report
-    report_file = output_dir / "captions_report.json"
-    serializable = []
-    for r in results:
-        serializable.append({
-            "image": str(r.get("image_path")),
-            "caption": r.get("caption"),
-            "baseline_caption": r.get("vanilla_caption", ""),
-            "relations": [
-                f"{rel['subject']} {rel['predicate']} {rel['object']} ({rel.get('confidence', 0):.2f})"
-                for rel in r.get("relations", [])
-            ],
-            "detections": [
-                {"label": d["label"], "score": d.get("score")}
-                for d in r.get("detections", [])
-            ],
-            "relation_used": r.get("relation_used", False),
-        })
+                # Save visual annotation if requested
+                if args.visualize:
+                    vis_path = output_dir / f"{img_path.stem}_annotated.jpg"
+                    img_pil = Image.open(str(img_path)).convert("RGB")
+                    sel_rel = demo_res.get("relation", {}).get("selected")
+                    rels = [sel_rel] if sel_rel else []
+                    cap_text = (
+                        demo_res.get("captions", {}).get("relation_reranked")
+                        or demo_res.get("captions", {}).get("object_reranked")
+                        or demo_res.get("captions", {}).get("baseline")
+                        or ""
+                    )
+                    draw_relation_boxes(
+                        img_pil,
+                        demo_res.get("detections", {}).get("verified", []),
+                        rels,
+                        str(vis_path),
+                        caption=cap_text,
+                    )
 
-    with open(report_file, "w", encoding="utf-8") as f:
-        json.dump(serializable, f, indent=2)
+            except Exception as e:
+                print(f"  [ERROR] Failed processing {img_path.name}: {e}")
 
-    elapsed = time.time() - t_start
-    print("\n" + "=" * 70)
-    print(f"  Workflow complete! Processed {len(results)} images in {elapsed:.2f}s")
-    print(f"  Report saved to: {report_file}")
-    print("=" * 70)
+        # Save summary report for images
+        if results:
+            report_file = output_dir / "captions_report.json"
+            serializable = []
+            for r in results:
+                captions_dict = r.get("captions", {})
+                sel_rel = r.get("relation", {}).get("selected")
+                rel_list = (
+                    [f"{sel_rel['subject']} {sel_rel['predicate']} {sel_rel['object']} ({sel_rel.get('confidence', 0):.2f})"]
+                    if sel_rel else []
+                )
+                serializable.append({
+                    "image": str(r.get("image", {}).get("path")),
+                    "caption": captions_dict.get("relation_reranked") or captions_dict.get("object_reranked"),
+                    "baseline_caption": captions_dict.get("baseline", ""),
+                    "captions": captions_dict,
+                    "relations": rel_list,
+                    "detections": [
+                        {"label": d["label"], "score": d.get("score")}
+                        for d in r.get("detections", {}).get("verified", [])
+                    ],
+                    "relation_used": r.get("relation", {}).get("use_relation", False),
+                })
+
+            with open(report_file, "w", encoding="utf-8") as f:
+                json.dump(serializable, f, indent=2)
+
+            elapsed = time.time() - t_start
+            print("\n" + "=" * 70)
+            print(f"  Workflow complete! Processed {len(results)} images in {elapsed:.2f}s")
+            print(f"  Report saved to: {report_file}")
+            print("=" * 70)
+
     return 0
 
 
@@ -163,24 +211,28 @@ def run_caption_workflow(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="main.py",
-        description="Grounded Image Captioning: Production Pipeline & Training Suite",
+        description="Grounded Image & Video Captioning: Production Pipeline & Training Suite",
     )
     subparsers = parser.add_subparsers(dest="command", help="Workflow command to run")
 
     # 1. caption
-    p_cap = subparsers.add_parser("caption", help="Run grounded image captioning on image(s)")
+    p_cap = subparsers.add_parser("caption", help="Run grounded captioning on image(s) or video(s)")
     p_cap.add_argument("--input", "-i", type=str, default="./input",
-                       help="Path to input image file or directory (default: ./input)")
+                       help="Path to input image/video file or directory (default: ./input)")
     p_cap.add_argument("--output", "-o", type=str, default="./results",
-                       help="Directory to save generated captions and results (default: ./results)")
+                       help="Directory to save generated captions, transcripts, and videos (default: ./results)")
     p_cap.add_argument("--top-k", type=int, default=3,
-                       help="Maximum relation triplets to evaluate per image (default: 3)")
+                       help="Maximum relation triplets to evaluate per frame (default: 3)")
     p_cap.add_argument("--temperature", type=float, default=2.0,
                        help="Temperature for relation prediction calibration (default: 2.0)")
     p_cap.add_argument("--compare", action=argparse.BooleanOptionalAction, default=True,
                        help="Generate baseline vanilla BLIP caption for side-by-side comparison (default: True)")
     p_cap.add_argument("--visualize", action="store_true", default=True,
                        help="Save annotated detection and relationship image to output directory")
+    p_cap.add_argument("--sample-rate", type=float, default=1.0,
+                       help="Frame sampling interval in seconds for videos (default: 1.0s)")
+    p_cap.add_argument("--render-video", action=argparse.BooleanOptionalAction, default=True,
+                       help="Render and save annotated output video with bounding boxes & subtitles (default: True)")
 
     # 2. train-relations
     p_tr = subparsers.add_parser("train-relations", help="Train Visual-Semantic Relation MLP on Visual Genome")
@@ -217,7 +269,7 @@ def main() -> None:
     # Default to "caption" if no command specified but arguments or input exists
     if len(sys.argv) == 1:
         parser.print_help()
-        print("\n[TIP] Place images into the 'input/' folder and run 'python main.py caption'")
+        print("\n[TIP] Place images/videos into the 'input/' folder and run 'python main.py caption'")
         return
 
     args, unknown = parser.parse_known_args()

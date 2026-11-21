@@ -1,0 +1,117 @@
+{
+  "variant": "geometry_clip_union",
+  "rule": "max validation top-1 (training_meta.val_acc); tie -> max val_macro_f1; tie -> lowest seed. Test metrics are not read.",
+  "candidates": [
+    {
+      "seed": 42,
+      "tag": "geometry_clip_union_seed42",
+      "checkpoint_dir": "checkpoints_gpu/geometry_clip_union_seed42",
+      "val_top1": 0.628410608662469,
+      "val_macro_f1": 0.3885330414698196,
+      "best_epoch": 22,
+      "n_samples_val": 10482
+    },
+    {
+      "seed": 43,
+      "tag": "geometry_clip_union_seed43",
+      "checkpoint_dir": "checkpoints_gpu/geometry_clip_union_seed43",
+      "val_top1": 0.6302232398397253,
+      "val_macro_f1": 0.38396958896379974,
+      "best_epoch": 10,
+      "n_samples_val": 10482
+    },
+    {
+      "seed": 44,
+      "tag": "geometry_clip_union_seed44",
+      "checkpoint_dir": "checkpoints_gpu/geometry_clip_union_seed44",
+      "val_top1": 0.6265025758443046,
+      "val_macro_f1": 0.3803095462571412,
+      "best_epoch": 15,
+      "n_samples_val": 10482
+    }
+  ],
+  "selected": {
+    "seed": 43,
+    "tag": "geometry_clip_union_seed43",
+    "checkpoint_dir": "checkpoints_gpu/geometry_clip_union_seed43",
+    "val_top1": 0.6302232398397253,
+    "val_macro_f1": 0.38396958896379974,
+    "best_epoch": 10,
+    "n_samples_val": 10482
+  },
+  "verified_config": {
+    "wrapper_format": "model_state_dict+model_config",
+    "model_type": "mlp",
+    "num_labels": 80,
+    "num_predicates": 21,
+    "embed_dim": 64,
+    "hidden_dims": [
+      256,
+      128
+    ],
+    "clip_dim": 768,
+    "pose_dim": 0,
+    "union_dim": 768,
+    "geo_dim": 19,
+    "geo_norm": true,
+    "geo_mode": "ext",
+    "input_dim": 2451,
+    "feature_mode": "geometry+clip+union"
+  },
+  "feature_blocks": [
+    [
+      "subj_label",
+      64
+    ],
+    [
+      "obj_label",
+      64
+    ],
+    [
+      "geometry",
+      19
+    ],
+    [
+      "subj_clip",
+      768
+    ],
+    [
+      "obj_clip",
+      768
+    ],
+    [
+      "union_clip",
+      768
+    ]
+  ],
+  "weights_sha256": "0f08bad4bca2eb62cb6f30261f139e10c5c5c4873e4da65480aca93ca6e2cfc7",
+  "pred_vocab": [
+    "<pad>",
+    "<unk>",
+    "above",
+    "attached to",
+    "behind",
+    "carrying",
+    "covering",
+    "holding",
+    "in",
+    "in front of",
+    "inside",
+    "looking at",
+    "near",
+    "next to",
+    "on",
+    "over",
+    "riding",
+    "sitting on",
+    "standing on",
+    "under",
+    "wearing"
+  ],
+  "created_utc": "2026-09-16T14:30:56Z",
+  "git": {
+    "commit": "e9f56003ba14ddaa47d496cf1c7a11e7d9d31e00",
+    "branch": "main",
+    "dirty": true
+  }
+}

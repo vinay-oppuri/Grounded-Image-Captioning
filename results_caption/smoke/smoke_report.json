@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-09-18T08:56:15Z",
+  "checks": [
+    {
+      "check": "relation model loads",
+      "status": "PASS",
+      "detail": "input_dim=2451 blocks=[('subj_label', 64), ('obj_label', 64), ('geometry', 19), ('subj_clip', 768), ('obj_clip', 768), ('union_clip', 768)]"
+    },
+    {
+      "check": "YOLO detects objects",
+      "status": "PASS",
+      "detail": "raw/verified/pairs per image {'2374751': (7, 5, 20), '1593066': (10, 10, 90), '2377576': (2, 2, 2), '2409267': (2, 2, 2), '2316207': (9, 9, 30)}"
+    },
+    {
+      "check": "CLIP verification runs",
+      "status": "PASS",
+      "detail": "28 verified of 30 raw"
+    },
+    {
+      "check": "relations predicted",
+      "status": "PASS",
+      "detail": "5/5 images with a selected relation; confidences [0.924, 0.771, 0.959, 0.91, 0.744]"
+    },
+    {
+      "check": "relations above threshold 0.5",
+      "status": "PASS",
+      "detail": "5/5 images inject a relation"
+    },
+    {
+      "check": "synthetic relation reaches BLIP",
+      "status": "PASS",
+      "detail": "prefix 'a photo of a person riding a bicycle'; baseline ids [30522, 1037, 6302, 1997, 102] -> grounded ids [30522, 1037, 6302, 1997, 1037, 2711, 5559, 1037, 10165, 102] (expected [30522, 1037, 6302, 1997, 1037, 2711, 5559, 1037, 10165, 102]); caption 'a photo of a person riding a bicycle with a baby'"
+    },
+    {
+      "check": "baseline generation deterministic",
+      "status": "PASS",
+      "detail": "'a photo of a woman sitting on a couch holding a baby' vs 'a photo of a woman sitting on a couch holding a baby'"
+    },
+    {
+      "check": "baseline captions generated",
+      "status": "PASS",
+      "detail": "5/5; e.g. 'a photo of a woman sitting on a couch holding a baby'"
+    },
+    {
+      "check": "grounded captions generated",
+      "status": "PASS",
+      "detail": "5/5; e.g. 'a photo of a remote on a couch'"
+    },
+    {
+      "check": "baseline uses baseline prefix",
+      "status": "PASS",
+      "detail": "5/5 use 'a photo of'"
+    },
+    {
+      "check": "grounded path uses relation prefix exactly when decided",
+      "status": "PASS",
+      "detail": "5 image(s) with relation prefix, rest baseline prefix"
+    },
+    {
+      "check": "fallback reproduces baseline caption",
+      "status": "PASS",
+      "detail": "0/0 fallback captions identical to baseline"
+    },
+    {
+      "check": "candidate pools generated",
+      "status": "PASS",
+      "detail": "candidates per image {'2374751': 12, '1593066': 12, '2377576': 12, '2409267': 12, '2316207': 12} (K=4 per prefix)"
+    },
+    {
+      "check": "pool contains every prefix arm's own caption",
+      "status": "PASS",
+      "detail": "beam 0 of each prefix is byte-identical to that arm's single caption"
+    },
+    {
+      "check": "candidate scoring matches the reference forward",
+      "status": "PASS",
+      "detail": "max |shared-embedding - public forward| = 9.54e-07 over 12 candidates"
+    },
+    {
+      "check": "reranked captions come from the pool",
+      "status": "PASS",
+      "detail": "10 selections, all from the generated pool"
+    },
+    {
+      "check": "reranker can depart from BLIP's first candidate",
+      "status": "PASS",
+      "detail": "3/5 changed with the probe weights {'w_obj': 0.5, 'w_hall': 0.5, 'w_rel': 1.0} (plumbing only, not a result)"
+    },
+    {
+      "check": "reranking is deterministic",
+      "status": "PASS",
+      "detail": "re-running the selection reproduces every caption and score"
+    },
+    {
+      "check": "hallucination evaluation accepts all arms",
+      "status": "PASS",
+      "detail": "CHAIR_i on 5 images (plumbing only, not a result): {'baseline': 0.0, 'grounded': 0.0, 'objects_only': 0.0, 'object_reranked': 0.0, 'relation_reranked': 0.0}"
+    }
+  ],
+  "versions": {
+    "python": "3.11.7",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "ultralytics": "8.4.146",
+    "PIL": "12.3.0",
+    "numpy": "2.4.6",
+    "cuda": true,
+    "gpu": "NVIDIA GeForce GTX 1650"
+  },
+  "git": {
+    "commit": "bdfc1cd9840ea6eb856eb7b1151fc1ac618b263e",
+    "branch": "caption-rerank",
+    "dirty": true
+  }
+}

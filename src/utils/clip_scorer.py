@@ -164,7 +164,8 @@ class CLIPSimilarityScorer:
         """
         image_emb = self.encode_image(image)
         text_emb = self.encode_text(caption)
-        return float(image_emb @ text_emb)
+        sim = (image_emb @ text_emb.T).squeeze()
+        return float(sim.item())
 
     @torch.no_grad()
     def compute_similarities(
@@ -191,8 +192,10 @@ class CLIPSimilarityScorer:
         image_emb = self.encode_image(image)
         text_embs = self.encode_texts(captions)
 
-        similarities = image_emb @ text_embs.T
-        return [float(s) for s in similarities]
+        similarities = (image_emb @ text_embs.T).squeeze(0)
+        if similarities.ndim == 0:
+            return [float(similarities.item())]
+        return [float(s.item()) for s in similarities]
 
     @torch.no_grad()
     def rerank_captions(

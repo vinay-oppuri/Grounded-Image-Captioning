@@ -1,0 +1,178 @@
+{
+  "image": {
+    "path": "input/image.jpg",
+    "size": [
+      577,
+      768
+    ]
+  },
+  "device": "cuda",
+  "blip_dtype": "float32",
+  "detections": {
+    "raw": [
+      {
+        "label": "cup",
+        "box": [
+          267.18,
+          140.45,
+          407.31,
+          270.48
+        ],
+        "score": 0.9273
+      },
+      {
+        "label": "fork",
+        "box": [
+          69.41,
+          476.45,
+          386.29,
+          633.64
+        ],
+        "score": 0.8693
+      },
+      {
+        "label": "cup",
+        "box": [
+          120.09,
+          245.01,
+          223.57,
+          334.99
+        ],
+        "score": 0.7835
+      },
+      {
+        "label": "banana",
+        "box": [
+          115.02,
+          377.03,
+          402.21,
+          461.03
+        ],
+        "score": 0.6751
+      },
+      {
+        "label": "dining table",
+        "box": [
+          48.76,
+          193.79,
+          572.21,
+          667.61
+        ],
+        "score": 0.6599
+      },
+      {
+        "label": "banana",
+        "box": [
+          127.9,
+          314.82,
+          440.09,
+          469.23
+        ],
+        "score": 0.5151
+      }
+    ],
+    "verified": [
+      {
+        "label": "cup",
+        "box": [
+          267.18,
+          140.45,
+          407.31,
+          270.48
+        ],
+        "score": 0.9273,
+        "clip_similarity": 0.304,
+        "verification_score": 0.616
+      },
+      {
+        "label": "fork",
+        "box": [
+          69.41,
+          476.45,
+          386.29,
+          633.64
+        ],
+        "score": 0.8693,
+        "clip_similarity": 0.256,
+        "verification_score": 0.563
+      },
+      {
+        "label": "cup",
+        "box": [
+          120.09,
+          245.01,
+          223.57,
+          334.99
+        ],
+        "score": 0.7835,
+        "clip_similarity": 0.269,
+        "verification_score": 0.526
+      },
+      {
+        "label": "banana",
+        "box": [
+          115.02,
+          377.03,
+          402.21,
+          461.03
+        ],
+        "score": 0.6751,
+        "clip_similarity": 0.27,
+        "verification_score": 0.473
+      },
+      {
+        "label": "dining table",
+        "box": [
+          48.76,
+          193.79,
+          572.21,
+          667.61
+        ],
+        "score": 0.6599,
+        "clip_similarity": 0.251,
+        "verification_score": 0.456
+      },
+      {
+        "label": "banana",
+        "box": [
+          127.9,
+          314.82,
+          440.09,
+          469.23
+        ],
+        "score": 0.5151,
+        "clip_similarity": 0.276,
+        "verification_score": 0.396
+      }
+    ]
+  },
+  "relation": {
+    "selected": {
+      "subject": "cup",
+      "predicate": "near",
+      "object": "cup",
+      "confidence": 0.7952670454978943
+    },
+    "use_relation": true,
+    "fallback_reason": null
+  },
+  "captions": {
+    "baseline": "a photo of a plate of bananas and a bowl of fruit on a table",
+    "object_reranked": "a photo of a cup near a cup of coffee and a plate of bananas on a table",
+    "relation_reranked": "a photo of a cup near a cup of coffee and a plate of bananas on a table"
+  },
+  "weights": {
+    "object_reranked": {
+      "w_obj": 1.0,
+      "w_hall": 0.0,
+      "w_rel": 0.0
+    },
+    "relation_reranked": {
+      "w_obj": 1.0,
+      "w_hall": 0.0,
+      "w_rel": 0.5
+    }
+  },
+  "warnings": [],
+  "created_utc": "2026-11-21T09:09:33Z"
+}

@@ -41,7 +41,7 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from PIL import Image, ImageDraw, ImageFont
@@ -332,7 +332,7 @@ def generate_grounded_caption(
 # ---------------------------------------------------------------------------
 
 def run_grounded_pipeline(
-    image_path: str,
+    image_input: Union[str, Path, Image.Image],
     top_k_relations: int = 3,
     temperature: float = 2.0,
     debug: bool = False,
@@ -340,17 +340,24 @@ def run_grounded_pipeline(
     improved_priors: bool = False,
     diagnose: bool = False,
 ) -> Dict:
-    """Run the complete grounded caption pipeline on a single image.
+    """Run the complete grounded caption pipeline on a single image or in-memory PIL Image.
 
     Steps:
       1. YOLO detection
       2. Semantic relation inference (rerank + filter + dedup)
       3. Verbalize + build semantic prompt
-      4. BLIP-2 generation + evidence gating
+      4. BLIP generation + evidence gating
       5. Save debug info (raw predictions, filtered, verbalized, etc.)
 
     Returns a result dict with all intermediate outputs for visibility.
     """
+    if isinstance(image_input, Image.Image):
+        image = image_input.convert("RGB")
+        image_path = getattr(image_input, "filename", "in-memory-frame")
+    else:
+        image_path = str(image_input)
+        image = Image.open(image_path).convert("RGB")
+
     print(f"\n{'=' * 70}")
     print(f"  SEMANTIC GROUNDED CAPTION PIPELINE")
     print(f"  Image: {image_path}")
@@ -363,8 +370,6 @@ def run_grounded_pipeline(
         "diagnose": diagnose,
     }
 
-    # Load image
-    image = Image.open(image_path).convert("RGB")
     img_w, img_h = image.size
     result["image_size"] = (img_w, img_h)
     print(f"  Image size: {img_w}x{img_h}")

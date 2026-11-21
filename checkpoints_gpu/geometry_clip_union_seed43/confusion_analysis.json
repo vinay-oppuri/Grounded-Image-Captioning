@@ -1,0 +1,104 @@
+{
+  "top_confusions": [
+    {
+      "true": "riding",
+      "predicted": "on",
+      "count": 481
+    },
+    {
+      "true": "sitting on",
+      "predicted": "on",
+      "count": 322
+    },
+    {
+      "true": "on",
+      "predicted": "riding",
+      "count": 248
+    },
+    {
+      "true": "in",
+      "predicted": "on",
+      "count": 207
+    },
+    {
+      "true": "on",
+      "predicted": "sitting on",
+      "count": 181
+    },
+    {
+      "true": "near",
+      "predicted": "on",
+      "count": 162
+    },
+    {
+      "true": "carrying",
+      "predicted": "holding",
+      "count": 149
+    },
+    {
+      "true": "on",
+      "predicted": "in",
+      "count": 139
+    },
+    {
+      "true": "behind",
+      "predicted": "near",
+      "count": 128
+    },
+    {
+      "true": "standing on",
+      "predicted": "on",
+      "count": 125
+    },
+    {
+      "true": "on",
+      "predicted": "near",
+      "count": 113
+    },
+    {
+      "true": "carrying",
+      "predicted": "wearing",
+      "count": 108
+    },
+    {
+      "true": "holding",
+      "predicted": "on",
+      "count": 107
+    },
+    {
+      "true": "near",
+      "predicted": "behind",
+      "count": 89
+    },
+    {
+      "true": "looking at",
+      "predicted": "holding",
+      "count": 87
+    },
+    {
+      "true": "on",
+      "predicted": "holding",
+      "count": 85
+    },
+    {
+      "true": "in front of",
+      "predicted": "near",
+      "count": 77
+    },
+    {
+      "true": "wearing",
+      "predicted": "on",
+      "count": 62
+    },
+    {
+      "true": "under",
+      "predicted": "holding",
+      "count": 59
+    },
+    {
+      "true": "under",
+      "predicted": "near",
+      "count": 51
+    }
+  ]
+}

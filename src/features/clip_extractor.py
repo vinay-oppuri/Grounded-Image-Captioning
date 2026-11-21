@@ -73,6 +73,8 @@ class CLIPExtractor:
     def _lazy_load(cls) -> None:
         if cls._model is not None:
             return
+        import transformers
+        transformers.logging.set_verbosity_error()
         print("[CLIPExtractor] Loading CLIP vision encoder (frozen) …")
         cls._processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
         cls._model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")

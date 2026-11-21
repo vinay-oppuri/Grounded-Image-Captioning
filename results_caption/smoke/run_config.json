@@ -1,0 +1,50 @@
+{
+  "created_utc": "2026-09-18T08:55:39Z",
+  "git": {
+    "commit": "bdfc1cd9840ea6eb856eb7b1151fc1ac618b263e",
+    "branch": "caption-rerank",
+    "dirty": true
+  },
+  "versions": {
+    "python": "3.11.7",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.17.0",
+    "ultralytics": "8.4.146",
+    "PIL": "12.3.0",
+    "numpy": "2.4.6",
+    "cuda": true,
+    "gpu": "NVIDIA GeForce GTX 1650"
+  },
+  "eval_set": {
+    "path": "splits/caption_eval_test_250.json",
+    "usable_ids_sha256": "541d93c6e2496822ffadee6805224a0e6a0bb2a4b9eadfb852d8485b4e87db35",
+    "split": "test",
+    "status": "OK",
+    "final": 250
+  },
+  "image_ids": [
+    "2374751",
+    "1593066",
+    "2377576",
+    "2409267",
+    "2316207"
+  ],
+  "relation_threshold": 0.5,
+  "relation_threshold_is_default": true,
+  "relation_checkpoint": {
+    "checkpoint_dir": "checkpoints_gpu/geometry_clip_union_seed43",
+    "weights_sha256": "0f08bad4bca2eb62cb6f30261f139e10c5c5c4873e4da65480aca93ca6e2cfc7",
+    "matches_selection_file": true,
+    "selection_rule_applied": "max validation top-1 (training_meta.val_acc); tie -> max val_macro_f1; tie -> lowest seed. Test metrics are not read.",
+    "selected_seed": 43
+  },
+  "detection": {
+    "model": "yolo11m.pt",
+    "conf_thres": 0.5,
+    "top_k": 10,
+    "verification": "utils.detection_verifier.verify_detections"
+  },
+  "relation_policy": "argmax over valid predicates (as eval_gt_relations.py); confidence = softmax prob at T=1; semantic filter = predict._is_extreme_nonsense; select max confidence; inject iff confidence >= threshold",
+  "seed": 42
+}

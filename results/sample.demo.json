@@ -1,0 +1,156 @@
+{
+  "image": {
+    "path": "input/sample.jpg",
+    "size": [
+      810,
+      1080
+    ]
+  },
+  "device": "cuda",
+  "blip_dtype": "float32",
+  "detections": {
+    "raw": [
+      {
+        "label": "bus",
+        "box": [
+          7.9,
+          227.07,
+          806.43,
+          733.17
+        ],
+        "score": 0.9268
+      },
+      {
+        "label": "person",
+        "box": [
+          48.5,
+          399.5,
+          250.03,
+          905.41
+        ],
+        "score": 0.9162
+      },
+      {
+        "label": "person",
+        "box": [
+          669.12,
+          391.46,
+          809.65,
+          880.6
+        ],
+        "score": 0.9073
+      },
+      {
+        "label": "person",
+        "box": [
+          221.68,
+          406.86,
+          345.65,
+          859.98
+        ],
+        "score": 0.8935
+      },
+      {
+        "label": "person",
+        "box": [
+          0.2,
+          551.0,
+          78.65,
+          870.16
+        ],
+        "score": 0.7868
+      }
+    ],
+    "verified": [
+      {
+        "label": "bus",
+        "box": [
+          7.9,
+          227.07,
+          806.43,
+          733.17
+        ],
+        "score": 0.9268,
+        "clip_similarity": 0.267,
+        "verification_score": 0.597
+      },
+      {
+        "label": "person",
+        "box": [
+          48.5,
+          399.5,
+          250.03,
+          905.41
+        ],
+        "score": 0.9162,
+        "clip_similarity": 0.248,
+        "verification_score": 0.582
+      },
+      {
+        "label": "person",
+        "box": [
+          669.12,
+          391.46,
+          809.65,
+          880.6
+        ],
+        "score": 0.9073,
+        "clip_similarity": 0.213,
+        "verification_score": 0.56
+      },
+      {
+        "label": "person",
+        "box": [
+          221.68,
+          406.86,
+          345.65,
+          859.98
+        ],
+        "score": 0.8935,
+        "clip_similarity": 0.237,
+        "verification_score": 0.565
+      },
+      {
+        "label": "person",
+        "box": [
+          0.2,
+          551.0,
+          78.65,
+          870.16
+        ],
+        "score": 0.7868,
+        "clip_similarity": 0.229,
+        "verification_score": 0.508
+      }
+    ]
+  },
+  "relation": {
+    "selected": {
+      "subject": "person",
+      "predicate": "near",
+      "object": "person",
+      "confidence": 0.6989732980728149
+    },
+    "use_relation": true,
+    "fallback_reason": null
+  },
+  "captions": {
+    "baseline": "a photo of a group of people getting on a bus",
+    "object_reranked": "a photo of a group of people getting on a bus",
+    "relation_reranked": "a photo of a group of people getting on a bus"
+  },
+  "weights": {
+    "object_reranked": {
+      "w_obj": 1.0,
+      "w_hall": 0.0,
+      "w_rel": 0.0
+    },
+    "relation_reranked": {
+      "w_obj": 1.0,
+      "w_hall": 0.0,
+      "w_rel": 0.5
+    }
+  },
+  "warnings": [],
+  "created_utc": "2026-11-21T12:25:38Z"
+}

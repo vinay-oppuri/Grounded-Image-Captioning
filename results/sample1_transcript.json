@@ -1,0 +1,356 @@
+[
+  {
+    "frame_index": 0,
+    "timestamp_sec": 0.0,
+    "end_sec": 1.0,
+    "timestamp_str": "00:00.000",
+    "caption": "The scene contains a backpack and a person, but the interaction is unclear.",
+    "baseline_caption": "a photo of a man with a backpack in a hallway",
+    "relations": [
+      "person wearing backpack (0.38)"
+    ],
+    "detections": [
+      {
+        "label": "backpack",
+        "score": 0.75,
+        "box": [
+          698.8088989257812,
+          347.817626953125,
+          1122.18017578125,
+          1065.939453125
+        ]
+      },
+      {
+        "label": "person",
+        "score": 0.739,
+        "box": [
+          515.8800659179688,
+          110.17831420898438,
+          1042.064697265625,
+          1070.3668212890625
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 30,
+    "timestamp_sec": 1.001,
+    "end_sec": 2.001,
+    "timestamp_str": "00:01.001",
+    "caption": "a photo of a person holding a remote and reading",
+    "baseline_caption": "a photo of a man sitting on a couch reading a newspaper",
+    "relations": [
+      "person holding remote (0.72)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.949,
+        "box": [
+          792.2550659179688,
+          50.950927734375,
+          1603.55712890625,
+          1066.912109375
+        ]
+      },
+      {
+        "label": "remote",
+        "score": 0.644,
+        "box": [
+          97.44810485839844,
+          747.2671508789062,
+          311.1419677734375,
+          802.16455078125
+        ]
+      },
+      {
+        "label": "couch",
+        "score": 0.638,
+        "box": [
+          448.18359375,
+          197.61419677734375,
+          1917.5322265625,
+          1066.2021484375
+        ]
+      },
+      {
+        "label": "book",
+        "score": 0.564,
+        "box": [
+          0.43131065368652344,
+          740.1487426757812,
+          61.77105712890625,
+          1061.89453125
+        ]
+      },
+      {
+        "label": "book",
+        "score": 0.513,
+        "box": [
+          447.8191223144531,
+          358.4988098144531,
+          922.6748046875,
+          1066.760009765625
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 60,
+    "timestamp_sec": 2.002,
+    "end_sec": 3.002,
+    "timestamp_str": "00:02.002",
+    "caption": "a photo of a person holding a book and reading",
+    "baseline_caption": "a photo of a man sitting on a couch reading a newspaper",
+    "relations": [
+      "person holding book (0.36)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.949,
+        "box": [
+          810.0838623046875,
+          31.821533203125,
+          1618.596923828125,
+          1065.528076171875
+        ]
+      },
+      {
+        "label": "book",
+        "score": 0.765,
+        "box": [
+          468.3218994140625,
+          262.5819396972656,
+          957.0027465820312,
+          1070.3602294921875
+        ]
+      },
+      {
+        "label": "couch",
+        "score": 0.541,
+        "box": [
+          0.0,
+          95.92391967773438,
+          1915.907958984375,
+          1066.788818359375
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 90,
+    "timestamp_sec": 3.003,
+    "end_sec": 4.003,
+    "timestamp_str": "00:03.003",
+    "caption": "a photo of a person carrying a handbag in a hallway",
+    "baseline_caption": "a photo of a young man in a black t - shirt holding a blue backpack",
+    "relations": [
+      "person carrying handbag (0.28)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.959,
+        "box": [
+          614.42919921875,
+          6.722991943359375,
+          1440.283203125,
+          1065.58251953125
+        ]
+      },
+      {
+        "label": "handbag",
+        "score": 0.781,
+        "box": [
+          1120.9874267578125,
+          405.706787109375,
+          1454.5074462890625,
+          1075.668212890625
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 120,
+    "timestamp_sec": 4.004,
+    "end_sec": 5.004,
+    "timestamp_str": "00:04.004",
+    "caption": "a photo of a person holding a mouse and reading",
+    "baseline_caption": "a photo of a man sitting on a couch reading a newspaper",
+    "relations": [
+      "person holding mouse (0.47)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.925,
+        "box": [
+          985.8641967773438,
+          4.44818115234375,
+          1617.715087890625,
+          1065.80908203125
+        ]
+      },
+      {
+        "label": "book",
+        "score": 0.727,
+        "box": [
+          607.1766967773438,
+          404.6772766113281,
+          1117.424560546875,
+          1070.072265625
+        ]
+      },
+      {
+        "label": "mouse",
+        "score": 0.625,
+        "box": [
+          98.76143646240234,
+          687.7686767578125,
+          225.23147583007812,
+          740.4083251953125
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 150,
+    "timestamp_sec": 5.005,
+    "end_sec": 6.005,
+    "timestamp_str": "00:05.005",
+    "caption": "The scene contains a person and a couch, but the interaction is unclear.",
+    "baseline_caption": "a photo of a man sitting on a couch",
+    "relations": [
+      "person on couch (0.73)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.934,
+        "box": [
+          707.1465454101562,
+          11.44500732421875,
+          1779.7041015625,
+          1066.927734375
+        ]
+      },
+      {
+        "label": "couch",
+        "score": 0.575,
+        "box": [
+          0.0,
+          194.79620361328125,
+          1916.5513916015625,
+          989.9898681640625
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 180,
+    "timestamp_sec": 6.006,
+    "end_sec": 7.006,
+    "timestamp_str": "00:06.006",
+    "caption": "a photo of a young man in a black t - shirt holding a camera",
+    "baseline_caption": "a photo of a young man in a black t - shirt holding a camera",
+    "relations": [],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.962,
+        "box": [
+          547.265869140625,
+          5.541778564453125,
+          1528.635986328125,
+          1067.5848388671875
+        ]
+      }
+    ],
+    "relation_used": false
+  },
+  {
+    "frame_index": 210,
+    "timestamp_sec": 7.007,
+    "end_sec": 8.007,
+    "timestamp_str": "00:07.007",
+    "caption": "The scene contains a person and a couch, but the interaction is unclear.",
+    "baseline_caption": "a photo of a man playing a video game",
+    "relations": [
+      "person on couch (0.75)"
+    ],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.904,
+        "box": [
+          736.792236328125,
+          15.357696533203125,
+          1917.0498046875,
+          1064.016845703125
+        ]
+      },
+      {
+        "label": "couch",
+        "score": 0.555,
+        "box": [
+          1.99200439453125,
+          188.79025268554688,
+          1913.134521484375,
+          1062.3876953125
+        ]
+      }
+    ],
+    "relation_used": true
+  },
+  {
+    "frame_index": 240,
+    "timestamp_sec": 8.008,
+    "end_sec": 9.008,
+    "timestamp_str": "00:08.008",
+    "caption": "a photo of a young man in a black t - shirt and suspends, looking at the camera",
+    "baseline_caption": "a photo of a young man in a black t - shirt and suspends, looking at the camera",
+    "relations": [],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.96,
+        "box": [
+          447.405029296875,
+          5.538299560546875,
+          1544.8048095703125,
+          1066.5009765625
+        ]
+      }
+    ],
+    "relation_used": false
+  },
+  {
+    "frame_index": 270,
+    "timestamp_sec": 9.009,
+    "end_sec": 9.476,
+    "timestamp_str": "00:09.009",
+    "caption": "a photo of a man in a black t - shirt and suspends, looking at the camera",
+    "baseline_caption": "a photo of a man in a black t - shirt and suspends, looking at the camera",
+    "relations": [],
+    "detections": [
+      {
+        "label": "person",
+        "score": 0.954,
+        "box": [
+          376.75396728515625,
+          2.103424072265625,
+          1555.6080322265625,
+          1064.3785400390625
+        ]
+      }
+    ],
+    "relation_used": false
+  }
+]
